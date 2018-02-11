@@ -44,6 +44,7 @@ class AddRecipe extends React.Component
   render() {
     return(
       <div className="card" >
+				<h2>Créer une recette</h2>
 				<form className="admin-form ajouter-recette"
 					ref={input => this.recipeForm = input}
 					onSubmit={(e) => this.addRecipe(e)}

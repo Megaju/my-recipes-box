@@ -142,6 +142,7 @@ class Admin extends React.Component
     const recipe = this.props.recipes[key]
     return (
       <div className="card" key={key}>
+        <h2>Modifier la recette: {recipe.name}</h2>
 				<form className="admin-form">
 
 					<input name="name" type="text" placeholder="Nom de la recette"
