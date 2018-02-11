@@ -13,7 +13,7 @@ class Card extends React.Component
       .map((item, key) => <li key={key}>{item}</li>)
 
     return(
-      <div className="card">
+      <div className="card public-card">
         <div className="image">
           <img src={this.props.details.image} alt={this.props.details.name} />
         </div>
