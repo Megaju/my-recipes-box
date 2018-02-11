@@ -2,6 +2,7 @@ import React from 'react'
 
 import base from '../base'
 import ImageUploader from 'react-firebase-image-uploader'
+import ProgressBar from 'react-progress-bar-battlenet-style';
 
 class AddRecipe extends React.Component
 {
@@ -28,7 +29,10 @@ class AddRecipe extends React.Component
   // Functions Image Uploading
 	handleUploadStart = () => this.setState({isUploading: true, progress: 0})
 
-	handleProgress = (progress) => this.setState({progress})
+	handleProgress = (progress) => {
+		this.setState({progress})
+	}
+
 
   handleUploadError = (error) => {
     this.setState({isUploading: false})
@@ -53,7 +57,9 @@ class AddRecipe extends React.Component
 					<input ref={input => this.name = input} type="text" placeholder="Nom de la recette" />
 
           {this.state.isUploading &&
-            <p>Progress: {this.state.progress}</p>
+            <div>
+							<ProgressBar completed={this.state.progress} />
+						</div>
           }
           {this.state.imageURL &&
 						<div>

@@ -311,6 +311,9 @@ footer {
 	cursor: pointer;
 	opacity: 0;
 }
+.progress__bar {
+	font-weight: 700;
+}
 
 /* ----------------------------
 	Login
