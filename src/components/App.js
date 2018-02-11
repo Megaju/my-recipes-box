@@ -49,6 +49,24 @@ class App extends React.Component {
 
 	deleteRecipe = key => {
 		const recipes = {...this.state.recipes}
+		const recipe = recipes[key]
+
+    const imageToDelete = recipe.image
+    const imageToDeleteA = imageToDelete.split('images%')
+    const imageToDeleteB = imageToDeleteA[1].split('%')
+    const imageToDeleteC = imageToDeleteB[1].split('?alt')
+    const finalImage = 'images/' + this.props.params.pseudo + '/' + imageToDeleteC[0].substr(2)
+
+    var storage = base.storage()
+    var storageRef = storage.ref()
+    var imageRef = storageRef.child(finalImage)
+
+    imageRef.delete().then(function() {
+
+    }).catch(function(error) {
+      console.log(error)
+    })
+
 		recipes[key] = null
 		this.setState({recipes})
 	}

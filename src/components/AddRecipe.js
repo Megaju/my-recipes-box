@@ -55,7 +55,11 @@ class AddRecipe extends React.Component
             <p>Progress: {this.state.progress}</p>
           }
           {this.state.imageURL &&
-            <img src={this.state.imageURL} role="presentation" />
+						<div>
+							<div className="image">
+								<img src={this.state.imageURL} role="presentation" />
+							</div>
+						</div>
           }
           <ImageUploader
             hidden
