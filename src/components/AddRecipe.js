@@ -37,7 +37,8 @@ class AddRecipe extends React.Component
 
   handleUploadSuccess = (filename) => {
     this.setState({image: filename, progress: 100, isUploading: false})
-    base.storage().ref('images').child(filename).getDownloadURL().then(url => this.setState({imageURL: url}))
+		let dirAndFilename = this.props.pseudo + '/' + filename
+    base.storage().ref('images').child(dirAndFilename).getDownloadURL().then(url => this.setState({imageURL: url}))
   }
 
   render() {
@@ -60,7 +61,7 @@ class AddRecipe extends React.Component
             hidden
             name="image"
             accept="image/*"
-            storageRef={base.storage().ref('images')}
+            storageRef={base.storage().ref('images/'+this.props.pseudo+'/')}
             onUploadStart={this.handleUploadStart}
             onUploadError={this.handleUploadError}
             onUploadSuccess={this.handleUploadSuccess}
@@ -78,7 +79,8 @@ class AddRecipe extends React.Component
   }
 
   static propTypes = {
-    addRecipe: React.PropTypes.func.isRequired
+    addRecipe: React.PropTypes.func.isRequired,
+		pseudo: React.PropTypes.string.isRequired
   }
 }
 

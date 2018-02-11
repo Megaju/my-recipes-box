@@ -93,7 +93,8 @@ class Admin extends React.Component
 
   handleUploadSuccess = (filename) => {
     this.setState({image: filename, progress: 100, isUploading: false})
-    base.storage().ref('images').child(filename).getDownloadURL().then(url => this.setState({imageURL: url}))
+    let dirAndFilename = this.props.pseudo + '/' + filename
+    base.storage().ref('images').child(dirAndFilename).getDownloadURL().then(url => this.setState({imageURL: url}))
   }
 
   deleteImage = () => {
@@ -104,8 +105,9 @@ class Admin extends React.Component
     const recipe = this.props.recipes[key]
     const imageToDelete = recipe.image
     const imageToDeleteA = imageToDelete.split('images%')
-    const imageToDeleteB = imageToDeleteA[1].split('?alt')
-    const finalImage = 'images/' + imageToDeleteB[0].substr(2)
+    const imageToDeleteB = imageToDeleteA[1].split('%')
+    const imageToDeleteC = imageToDeleteB[1].split('?alt')
+    const finalImage = 'images/' + this.props.pseudo + '/' + imageToDeleteC[0].substr(2)
 
     var storage = base.storage()
     var storageRef = storage.ref()
@@ -164,7 +166,7 @@ class Admin extends React.Component
             hidden
             name="image"
             accept="image/*"
-            storageRef={base.storage().ref('images')}
+            storageRef={base.storage().ref('images/'+this.props.pseudo+'/')}
             onUploadStart={this.handleUploadStart}
             onUploadError={this.handleUploadError}
             onUploadSuccess={this.handleUploadSuccess}
@@ -211,7 +213,10 @@ class Admin extends React.Component
 
     return(
       <div className="cards">
-        <AddRecipe addRecipe={this.props.addRecipe} />
+        <AddRecipe
+          addRecipe={this.props.addRecipe}
+          pseudo={this.props.pseudo}
+          />
         {adminCards}
         <footer>
           <button onClick={this.props.loadRecipesExample}>
