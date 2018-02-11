@@ -1,18 +1,43 @@
 import React from 'react'
 
+import base from '../base'
+import ImageUploader from 'react-firebase-image-uploader'
+
 class AddRecipe extends React.Component
 {
+
+  // States
+	state = {
+		isUploading: false,
+    progress: 0,
+    imageURL: ''
+	}
 
   addRecipe = event => {
     event.preventDefault()
     const recipe = {
       name: this.name.value,
-      image: this.image.value,
+      image: this.state.imageURL,
       ingredients: this.ingredients.value,
       instructions: this.instructions.value
     }
     this.props.addRecipe(recipe)
     this.recipeForm.reset()
+  }
+
+  // Functions Image Uploading
+	handleUploadStart = () => this.setState({isUploading: true, progress: 0})
+
+	handleProgress = (progress) => this.setState({progress})
+
+  handleUploadError = (error) => {
+    this.setState({isUploading: false})
+    console.error(error)
+  }
+
+  handleUploadSuccess = (filename) => {
+    this.setState({image: filename, progress: 100, isUploading: false})
+    base.storage().ref('images').child(filename).getDownloadURL().then(url => this.setState({imageURL: url}))
   }
 
   render() {
@@ -25,7 +50,22 @@ class AddRecipe extends React.Component
 
 					<input ref={input => this.name = input} type="text" placeholder="Nom de la recette" />
 
-					<input ref={input => this.image = input} type="text" placeholder="Adresse de l'image" />
+          {this.state.isUploading &&
+            <p>Progress: {this.state.progress}</p>
+          }
+          {this.state.imageURL &&
+            <img src={this.state.imageURL} role="presentation" />
+          }
+          <ImageUploader
+            hidden
+            name="image"
+            accept="image/*"
+            storageRef={base.storage().ref('images')}
+            onUploadStart={this.handleUploadStart}
+            onUploadError={this.handleUploadError}
+            onUploadSuccess={this.handleUploadSuccess}
+            onProgress={this.handleProgress}
+            />
 
 					<textarea ref={input => this.ingredients = input} rows="3" placeholder="Liste des ingrédients séparés par une virgule" ></textarea>
 

@@ -9,7 +9,6 @@ import recipes from '../recipes'
 // Firebase
 import base from '../base'
 
-
 class App extends React.Component {
 
 	// States
@@ -50,7 +49,7 @@ class App extends React.Component {
 
 	deleteRecipe = key => {
 		const recipes = {...this.state.recipes}
-		recipes[key] =  null
+		recipes[key] = null
 		this.setState({recipes})
 	}
 

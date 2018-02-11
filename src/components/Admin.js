@@ -1,13 +1,17 @@
 import React from 'react'
 import AddRecipe from './AddRecipe'
 import base from '../base'
+import ImageUploader from 'react-firebase-image-uploader'
 
 class Admin extends React.Component
 {
 
   state = {
     uid: null,
-    owner: null
+    owner: null,
+    isUploading: false,
+    progress: 0,
+    imageURL: ''
   }
 
   componentDidMount() {
@@ -20,11 +24,14 @@ class Admin extends React.Component
 
   treatChange = (event, key) => {
     const recipe = this.props.recipes[key]
+    const newImage = this.state.imageURL === '' ? recipe.image : this.state.imageURL
     const updateRecipe = {
       ...recipe,
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
+      image: newImage,
     }
     this.props.updateRecipe(key, updateRecipe)
+    this.setState({imageURL: ''})
   }
 
   connexion = provider => {
@@ -74,6 +81,44 @@ class Admin extends React.Component
     )
   }
 
+  // Functions Image Uploading
+	handleUploadStart = () => this.setState({isUploading: true, progress: 0})
+
+	handleProgress = (progress) => this.setState({progress})
+
+  handleUploadError = (error) => {
+    this.setState({isUploading: false})
+    console.error(error)
+  }
+
+  handleUploadSuccess = (filename) => {
+    this.setState({image: filename, progress: 100, isUploading: false})
+    base.storage().ref('images').child(filename).getDownloadURL().then(url => this.setState({imageURL: url}))
+  }
+
+  deleteImage = () => {
+    this.setState({imageURL: ''})
+  }
+
+  deleteImageOnServer = (event, key) => {
+    const recipe = this.props.recipes[key]
+    const imageToDelete = recipe.image
+    const imageToDeleteA = imageToDelete.split('images%')
+    const imageToDeleteB = imageToDeleteA[1].split('?alt')
+    const finalImage = 'images/' + imageToDeleteB[0].substr(2)
+
+    var storage = base.storage()
+    var storageRef = storage.ref()
+    var imageRef = storageRef.child(finalImage)
+
+    imageRef.delete().then(function() {
+      alert('L\'image a bien été supprimé du serveur. Il se peut qu\'elle apparaise encore à cause de votre cache.')
+    }).catch(function(error) {
+      console.log(error);
+      alert('Ho hooo une erreur est survenue !')
+    })
+  }
+
   renderAdmin = key => {
     const recipe = this.props.recipes[key]
     return (
@@ -83,8 +128,49 @@ class Admin extends React.Component
 					<input name="name" type="text" placeholder="Nom de la recette"
             value={recipe.name} onChange={e => this.treatChange(e, key)} />
 
-          <input name="image" type="text" placeholder="Adresse de l'image"
-            value={recipe.image} onChange={e => this.treatChange(e, key)} />
+          {this.state.isUploading &&
+            <p>Progress: {this.state.progress}</p>
+          }
+          {recipe.image &&
+            <div>
+              <label>Image actuelle</label>
+              <div className="image">
+                <img src={recipe.image} role="presentation" />
+              </div>
+              <label className="imageDelete" htmlFor="validateImage">
+                Supprimer
+                <input type="checkbox" name="deleteImage" onClick={e => this.deleteImageOnServer(e, key)}></input>
+              </label>
+            </div>
+          }
+          {this.state.imageURL &&
+            <div>
+              <label>Nouvelle image</label>
+              <div className="image">
+                <img src={this.state.imageURL} role="presentation" />
+              </div>
+              <label className="imageValidator" htmlFor="validateImage">
+                Valider
+                <input type="checkbox" name="validateImage" onClick={e => this.treatChange(e, key)}></input>
+              </label>
+              <label className="imageDelete" htmlFor="validateImage">
+                Abandonner
+                <input type="checkbox" name="deleteImage" onClick={this.deleteImage}></input>
+              </label>
+            </div>
+          }
+
+          <ImageUploader
+            hidden
+            name="image"
+            accept="image/*"
+            storageRef={base.storage().ref('images')}
+            onUploadStart={this.handleUploadStart}
+            onUploadError={this.handleUploadError}
+            onUploadSuccess={this.handleUploadSuccess}
+            onProgress={this.handleProgress}
+            onChange={e => this.treatChange(e, key)}
+            />
 
           <textarea name="ingredients" rows="3" placeholder="Liste des ingrédients séparés par une virgule"
             value={recipe.ingredients} onChange={e => this.treatChange(e, key)} ></textarea>
