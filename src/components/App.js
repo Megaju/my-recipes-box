@@ -1,6 +1,7 @@
 // React
 import React from 'react'
 import Header from './Header'
+import Menu from './Menu'
 import Admin from './Admin'
 import Card from './Card'
 // Load recipes
@@ -13,7 +14,8 @@ class App extends React.Component {
 
 	// States
 	state = {
-		recipes: {}
+		recipes: {},
+		viewAdmin: false
 	}
 
 	// Life cycle
@@ -52,6 +54,14 @@ class App extends React.Component {
 		this.setState({recipes})
 	}
 
+	// Alterner les vues User et Admin
+	showUserPanel = () => {
+		this.setState({ viewAdmin: false })
+	}
+	showAdminPanel = () => {
+		this.setState({ viewAdmin: true })
+	}
+
 	// Render
 	render() {
 		// forEach
@@ -59,22 +69,38 @@ class App extends React.Component {
 			.keys(this.state.recipes)
 			.map(key => <Card key={key} details={this.state.recipes[key]} />)
 
-		return (
-			<div className="box">
-				<Header pseudo={this.props.params.pseudo} />
-				<div className="cards">
-					{cards}
+		if (this.state.viewAdmin === true) {
+			return (
+				<div className="box">
+					<Header pseudo={this.props.params.pseudo} />
+					<Menu
+						showUserPanel={this.showUserPanel}
+						showAdminPanel={this.showAdminPanel}
+						/>
+					<Admin
+						recipes={this.state.recipes}
+						loadRecipesExample={this.loadRecipesExample}
+						addRecipe={this.addRecipe}
+						updateRecipe={this.updateRecipe}
+						deleteRecipe={this.deleteRecipe}
+						pseudo={this.props.params.pseudo}
+						/>
 				</div>
-				<Admin
-					recipes={this.state.recipes}
-					loadRecipesExample={this.loadRecipesExample}
-					addRecipe={this.addRecipe}
-					updateRecipe={this.updateRecipe}
-					deleteRecipe={this.deleteRecipe}
-					pseudo={this.props.params.pseudo}
-				/>
-			</div>
-		)
+			)
+		} else {
+			return (
+				<div className="box">
+					<Header pseudo={this.props.params.pseudo} />
+					<Menu
+						showUserPanel={this.showUserPanel}
+						showAdminPanel={this.showAdminPanel}
+						/>
+					<div className="cards">
+						{cards}
+					</div>
+				</div>
+			)
+		}
 	}
 
 	static propTypes = {
