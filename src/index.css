@@ -4,6 +4,11 @@ progress,sub,sup{vertical-align:baseline}button,hr,input{overflow:visible}[type=
 @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
 @import url('https://fonts.googleapis.com/css?family=Leckerli+One');
 
+body {
+	background-image: url('../public/images/background.png');
+	background-repeat: repeat;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	font-weight: lighter;
 }
@@ -158,9 +163,9 @@ nav.menu ul li.edit {
 .card {
 	flex: 0 1 500px;
 	min-height: 500px;
-	/*border: 5px solid lightblue;*/
 	margin: 20px 15px;
 	border-radius: 2px;
+	background: white;
 }
 .card h2 {
 	text-align: center;
@@ -168,7 +173,7 @@ nav.menu ul li.edit {
 }
 .public-card {
 	border-radius: 3px;
-	border: 1px solid #ccc;
+	border: 2px solid #ccc;
 }
 
 .image {
